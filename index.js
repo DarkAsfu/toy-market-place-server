@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors')
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -28,27 +28,32 @@ async function run() {
     await client.connect();
 
     const toyCollection = client.db("toyCarTraderDB").collection("carDetails")
-
-    app.get('/allToy', async(req, res) =>{
-      const cursor = toyCollection.find().limit(20);
-      const result = await cursor.toArray();
-      res.send(result);
-    })
-    app.post('/allToy', async(req, res) =>{
+    app.post('/allToy', async (req, res) => {
       const newToy = req.body;
       const result = await toyCollection.insertOne(newToy);
       res.send(result);
       console.log(newToy);
     })
-    app.get('/allToy/:category', async(req, res) =>{
+    app.get('/allToy', async (req, res) => {
+      const cursor = toyCollection.find().limit(20);
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    app.get('/allToy/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await toyCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.get('/allToy/:category', async (req, res) => {
       // console.log(req.params.category);
-      if(req.params.category === 'car' || req.params.category === 'bus' || req.params.category === 'truck'){
-        const result = await toyCollection.find({category: req.params.category}).toArray();
+      if (req.params.category === 'car' || req.params.category === 'bus' || req.params.category === 'truck') {
+        const result = await toyCollection.find({ category: req.params.category }).toArray();
         return res.send(result)
       }
-      // const cursor = toyCollection.find();
-      // const result = await cursor.toArray();
-      // res.send(result);
+
     })
 
 
@@ -63,10 +68,10 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req, res) =>{
-    res.send('Toy server is running');
+app.get('/', (req, res) => {
+  res.send('Toy server is running');
 })
 
-app.listen(port, ()=>{
-    console.log(`Server is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 })
