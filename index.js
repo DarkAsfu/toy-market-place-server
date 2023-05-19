@@ -35,6 +35,17 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/allToy/:category', async(req, res) =>{
+      console.log(req.params.category);
+      if(req.params.category === 'car' || req.params.category === 'bus' || req.params.category === 'truck'){
+        const result = await toyCollection.find({category: req.params.category}).toArray();
+        return res.send(result)
+      }
+      // const cursor = toyCollection.find();
+      // const result = await cursor.toArray();
+      // res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
