@@ -30,13 +30,18 @@ async function run() {
     const toyCollection = client.db("toyCarTraderDB").collection("carDetails")
 
     app.get('/allToy', async(req, res) =>{
-      const cursor = toyCollection.find();
+      const cursor = toyCollection.find().limit(20);
       const result = await cursor.toArray();
       res.send(result);
     })
-
+    app.post('/allToy', async(req, res) =>{
+      const newToy = req.body;
+      const result = await toyCollection.insertOne(newToy);
+      res.send(result);
+      console.log(newToy);
+    })
     app.get('/allToy/:category', async(req, res) =>{
-      console.log(req.params.category);
+      // console.log(req.params.category);
       if(req.params.category === 'car' || req.params.category === 'bus' || req.params.category === 'truck'){
         const result = await toyCollection.find({category: req.params.category}).toArray();
         return res.send(result)
