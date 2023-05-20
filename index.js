@@ -40,10 +40,10 @@ async function run() {
       res.send(result);
     })
 
-    app.get('/allToy/details/:id', async(req, res) =>{
+    app.get('/allToy/details/:id', async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await toyCollection.findOne(query);
       res.send(result);
     })
@@ -57,23 +57,43 @@ async function run() {
 
     })
 
-    app.get('/mytoys', async(req, res) =>{
+    app.get('/mytoys', async (req, res) => {
       console.log(req.query);
       let query = {};
-      if(req.query?.email){
-          query = {email: req.query.email}
+      if (req.query?.email) {
+        query = { email: req.query.email }
       }
       const cursor = toyCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
-  })
+    })
 
-  app.delete('/allToy/:id', async(req, res) =>{
-    const id = req.params.id;
-    const query = {_id: new ObjectId(id)}
-    const result = await toyCollection.deleteOne(query);
-    res.send(result);
-})
+    app.patch('/allToy/details/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedToy = req.body;
+      console.log(updatedToy);
+      const toy = {
+        $set: {
+          name: updatedToy.name,
+          picture: updatedToy.picture,
+          price: updatedToy.price,
+          availableQuantity: updatedToy.availableQuantity,
+          description: updatedToy.description,
+          
+        }
+      }
+
+      const result = await toyCollection.updateOne(filter, toy, options);
+      res.send(result)
+    })
+    app.delete('/allToy/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await toyCollection.deleteOne(query);
+      res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
