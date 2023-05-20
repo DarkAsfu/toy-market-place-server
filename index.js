@@ -27,7 +27,23 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const toyCollection = client.db("toyCarTraderDB").collection("carDetails")
+    const toyCollection = client.db("toyCarTraderDB").collection("carDetails");
+
+    const indexKeys = { name: 1 };
+    const indexOptions = { name: "titleToy" };
+    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+
+
+    app.get('/toySearchBytitle/:text', async(req, res) => {
+      const searchText = req.params.text;
+      const searchResult = await toyCollection.find({
+        name: { $regex: searchText, $options: 'i' }
+      }).toArray();
+      res.send(searchResult)
+    });
+
+
+
     app.post('/allToy', async (req, res) => {
       const newToy = req.body;
       const result = await toyCollection.insertOne(newToy);
@@ -81,7 +97,7 @@ async function run() {
           price: updatedToy.price,
           availableQuantity: updatedToy.availableQuantity,
           description: updatedToy.description,
-          
+
         }
       }
 
