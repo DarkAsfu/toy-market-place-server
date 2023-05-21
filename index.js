@@ -83,6 +83,27 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
+    app.get('/mytoys/ascending', async (req, res) => {
+      console.log(req.query);
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email }
+      }
+      const cursor = toyCollection.find(query).sort({price: 1});
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+    app.get('/mytoys/descending', async (req, res) => {
+      console.log(req.query);
+      let query = {};
+      if (req.query?.email) {
+        query = { email: req.query.email }
+      }
+      const cursor = toyCollection.find(query).sort({price: -1});
+      const result = await cursor.toArray();
+      res.send(result);
+    })
 
     app.patch('/allToy/details/:id', async (req, res) => {
       const id = req.params.id;
