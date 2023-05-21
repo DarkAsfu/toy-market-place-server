@@ -29,9 +29,9 @@ async function run() {
 
     const toyCollection = client.db("toyCarTraderDB").collection("carDetails");
 
-    const indexKeys = { name: 1 };
-    const indexOptions = { name: "titleToy" };
-    const result = await toyCollection.createIndex(indexKeys, indexOptions);
+    // const indexKeys = { name: 1 };
+    // const indexOptions = { name: "titleToy" };
+    // const result = await toyCollection.createIndex(indexKeys, indexOptions);
 
 
     app.get('/toySearchBytitle/:text', async(req, res) => {
